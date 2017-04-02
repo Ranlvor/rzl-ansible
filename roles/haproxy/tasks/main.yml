@@ -1,0 +1,9 @@
+- apt: name=haproxy state=present
+
+- copy:
+    src: haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
+  notify: reload haproxy
+
+- meta: flush_handlers
+

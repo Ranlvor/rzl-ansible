@@ -2,3 +2,4 @@
   roles:
      - ssh-keys
      - basic
+     - haproxy
