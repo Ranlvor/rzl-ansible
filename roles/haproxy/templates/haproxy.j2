@@ -40,13 +40,14 @@ frontend https
 	mode tcp
 	tcp-request inspect-delay 30s
 	tcp-request content accept if { req_ssl_hello_type 1 }
+	option tcplog
 
-	#use_backend app1-servers if { req_ssl_sni -i app1.example.com }
-	default_backend www_s
-
-backend www_s
-	mode tcp
-	server www_s 172.17.0.2:443
+{% for host in web_hosts if host.default is undefined %}
+	use_backend {{ host.domain }}_s if { req_ssl_sni -i {{ host.domain }} }
+{% endfor %}
+{% for host in web_hosts if host.default is defined and host.default == true %}
+	default_backend {{ host.domain }}_s
+{% endfor %}
 
 frontend http
 	bind *:80
@@ -60,8 +61,20 @@ frontend http
 
 	option forwardfor
 
-	#use_backend app1-servers2 if { hdr(host) -i app1.example.com }
-	default_backend www
+{% for host in web_hosts if host.default is undefined %}
+	use_backend {{ host.domain }} if { req_ssl_sni -i {{ host.domain }} }
+{% endfor %}
+{% for host in web_hosts if host.default is defined and host.default == true %}
+	default_backend {{ host.domain }}
+{% endfor %}
 
-backend www
-	server www 172.17.0.2:80 
+{% for host in web_hosts  %}
+backend {{ host.domain }}_s
+	mode tcp
+	server {{ host.domain }}_s {{ host.backend_host }}:{{ host.backend_port_ssl }}
+
+backend {{ host.domain }}
+	server {{ host.domain }} {{ host.backend_host }}:{{ host.backend_port_plain }}
+
+
+{% endfor %}

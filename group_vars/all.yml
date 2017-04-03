@@ -1,0 +1,11 @@
+web_hosts:
+- domain: git.raumzeitlabor.de
+  backend_host: 192.0.2.0 #RFC documentation IP-Address, placeholder to test ansible untill the git-backend actually has an IP-Address
+  backend_port_ssl: 443
+  backend_port_plain: 80
+
+- domain: www.raumzeitlabor.de
+  backend_host: 172.17.0.2
+  backend_port_ssl: 443
+  backend_port_plain: 80
+  default: true
