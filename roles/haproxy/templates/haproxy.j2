@@ -65,6 +65,7 @@ frontend http
 	#stats auth Another_User:passwd
 
 	option forwardfor
+        use_backend letsencrypt if { path_beg /.well-known/acme-challenge/ }
 
 {% for host in web_hosts if host.default is undefined %}
 	{% if host.wildcard is undefined %}
@@ -76,6 +77,9 @@ frontend http
 {% for host in web_hosts if host.default is defined and host.default == true %}
 	default_backend {{ host.domain }}
 {% endfor %}
+
+backend letsencrypt
+	server letsencrypt 127.0.0.1:402
 
 {% for host in web_hosts  %}
 

@@ -20,6 +20,11 @@
     dest: /var/lib/acme/conf/responses
   notify: quickstart acme
 
+- name: configure hostfile for acmetool
+  lineinfile: dest=/etc/hosts line='127.0.0.1 {{ item.domain }}'
+  when: item.backend_port_ssl is undefined
+  with_items: "{{ web_hosts }}"
+
 - name: configure certificates
   template:
     src: domain
@@ -27,3 +32,16 @@
   notify: rerun acme
   when: item.backend_port_ssl is undefined 
   with_items: "{{ web_hosts }}"
+
+- meta: flush_handlers
+
+- name: configure certificate symlinks
+  file:
+    dest='/etc/haproxy/ssl/{{ item.domain }}'
+    src='/var/lib/acme/haproxy/{{ item.domain }}'
+    state=link
+  when: item.backend_port_ssl is undefined 
+  with_items: "{{ web_hosts }}"
+  notify: reload haproxy
+
+- meta: flush_handlers
