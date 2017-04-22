@@ -43,7 +43,11 @@ frontend https
 	option tcplog
 
 {% for host in web_hosts if host.default is undefined %}
-	use_backend {{ host.domain }}_s if { req_ssl_sni -i {{ host.domain }} }
+	{% if host.wildcard is undefined %}
+		use_backend {{ host.domain }}_s if { req_ssl_sni -i {{ host.domain }} }
+	{% elif host.wildcard == true %}
+		use_backend {{ host.domain }}_s if { req_ssl_sni -m end {{ host.domain }} }
+	{% endif %}
 {% endfor %}
 {% for host in web_hosts if host.default is defined and host.default == true %}
 	default_backend {{ host.domain }}_s
@@ -62,19 +66,35 @@ frontend http
 	option forwardfor
 
 {% for host in web_hosts if host.default is undefined %}
-	use_backend {{ host.domain }} if { req_ssl_sni -i {{ host.domain }} }
+	{% if host.wildcard is undefined %}
+		use_backend {{ host.domain }} if { req_ssl_sni -i {{ host.domain }} }
+	{% elif host.wildcard == true %}
+		use_backend {{ host.domain }} if { req_ssl_sni -m end {{ host.domain }} }
+	{% endif %}
 {% endfor %}
 {% for host in web_hosts if host.default is defined and host.default == true %}
 	default_backend {{ host.domain }}
 {% endfor %}
 
 {% for host in web_hosts  %}
-backend {{ host.domain }}_s
-	mode tcp
-	server {{ host.domain }}_s {{ host.backend_host }}:{{ host.backend_port_ssl }}
 
 backend {{ host.domain }}
 	server {{ host.domain }} {{ host.backend_host }}:{{ host.backend_port_plain }}
+
+backend {{ host.domain }}_s
+	mode tcp
+{% if host.backend_port_ssl is undefined %}
+	server {{ host.domain }}_s localhost:{{ 8000 + loop.index }}
+{% else %}
+	server {{ host.domain }}_s {{ host.backend_host }}:{{ host.backend_port_ssl }}
+{% endif %}
+
+{% if host.backend_port_ssl is undefined %}
+frontend {{ host.domain }}_offload
+	bind *:{{ 8000 + loop.index }} ssl crt /etc/haproxy/ssl/{{ host.domain }}
+	mode http
+	use_backend {{ host.domain }}
+{% endif %}
 
 
 {% endfor %}

@@ -1,6 +1,26 @@
 - apt: name=haproxy state=present
 
-- template:
+- name: Creates SSL-Dir
+  file: path=/etc/haproxy/ssl state=directory owner=haproxy group=haproxy mode=0700
+
+- name: Create dummy SSL-Certificate to bootstrap haproxy
+  command: openssl req -x509 -newkey rsa:4096 -keyout /etc/haproxy/ssl/default.pem -out /etc/haproxy/ssl/default.pem -days 365 -nodes -subj "/O=RaumZeitLabor" creates=/etc/haproxy/ssl/default.pem
+
+- name: scanning which certs exist
+  stat: path=/etc/haproxy/ssl/{{ item.domain }}
+  register: links
+  with_items: "{{ web_hosts }}"
+
+- name: create dummy SSL-symlinks
+  file:
+    dest='/etc/haproxy/ssl/{{ item.item.domain }}'
+    src='/etc/haproxy/ssl/default.pem'
+    state=link
+  when: not item.stat.exists
+  with_items: "{{ links.results }}"
+
+- name: configure haproxy
+  template:
     src: haproxy.j2
     dest: /etc/haproxy/haproxy.cfg
     validate: haproxy -f %s -c
