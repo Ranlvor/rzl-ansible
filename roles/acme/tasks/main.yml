@@ -25,4 +25,5 @@
     src: domain
     dest: /var/lib/acme/desired/{{ item.domain }} 
   notify: rerun acme
+  when: item.backend_port_ssl is undefined 
   with_items: "{{ web_hosts }}"
