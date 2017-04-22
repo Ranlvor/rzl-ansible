@@ -35,6 +35,12 @@ defaults
 	errorfile 503 /etc/haproxy/errors/503.http
 	errorfile 504 /etc/haproxy/errors/504.http
 
+	stats enable
+	stats uri /haproxy?stats
+	#stats realm Strictly\ Private
+	#stats auth A_Username:YourPassword
+	#stats auth Another_User:passwd
+
 
 frontend https
 	bind *:443
@@ -57,12 +63,6 @@ frontend https
 frontend http
 	bind *:80
 	mode http
-
-	stats enable
-	stats uri /haproxy?stats
-	#stats realm Strictly\ Private
-	#stats auth A_Username:YourPassword
-	#stats auth Another_User:passwd
 
 	option forwardfor
         use_backend letsencrypt if { path_beg /.well-known/acme-challenge/ }
