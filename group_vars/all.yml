@@ -1,6 +1,6 @@
 # allowed values: staging, live
-acme_mode: staging
-#acme_mode: live
+#acme_mode: staging
+acme_mode: live
 
 web_hosts:
 # parameters:
@@ -25,30 +25,33 @@ web_hosts:
 #  backend_port_plain: 80
 #  wildcard: true
 
-- domain: raumzeitlabor.de #TODO: pass to 172.17.0.3 with termination
+- domain: raumzeitlabor.de
+  backend_host: 172.17.0.3
+  backend_port_plain: 80
+
+- domain: rzl.so
+  backend_host: 172.17.0.3
+  backend_port_plain: 80
+
+- domain: www.rzl.so
+  backend_host: 172.17.0.3
+  backend_port_plain: 80
+
+- domain: was.geht.im.rzl.so
+  backend_host: 172.17.0.3
+  backend_port_plain: 80
+
+- domain: w.rzl.so
+  backend_host: 172.17.0.5
+  backend_port_plain: 80
+
+- domain: wiki.raumzeitlabor.de
+  backend_host: 172.17.0.5
+  backend_port_plain: 80
+
+- domain: default # default to the old docker container because wildcard does not yet work as expected
   backend_host: 172.17.0.2
   backend_port_ssl: 443
   backend_port_plain: 80
   default: true
-
-#- domain: rzl.so
-#  backend_host: 172.17.0.3
-#  backend_port_plain: 80
-
-#- domain: www.rzl.so
-#  backend_host: 172.17.0.3
-#  backend_port_plain: 80
-
-#- domain: was.geht.im.rzl.so
-#  backend_host: 172.17.0.3
-#  backend_port_plain: 80
-
-#- domain: w.rzl.so
-#  backend_host: 172.17.0.5
-#  backend_port_plain: 80
-
-#- domain: wiki.raumzeitlabor.de
-#  backend_host: 172.17.0.5
-#  backend_port_plain: 80
-
 
