@@ -1,4 +1,12 @@
 web_hosts:
+# parameters:
+#   domain
+#   backend_host: where should we proxy that?
+#   backend_port_plain: which port should we proxy Plaintext-Requests to?
+#   backend_port_ssl: which port should we proxy SSL-Requests to? 
+#                     Will request let's encrypt certificate and do SSL-Termination to plain if not set.
+#   wildcard: make *.domain wildcard to the same backend
+#   default: there is only one default-backend which is used when all other rules do not match
 - domain: git.raumzeitlabor.de
   backend_host: 192.0.2.0 #RFC documentation IP-Address, placeholder to test ansible untill the git-backend actually has an IP-Address
   backend_port_ssl: 443
