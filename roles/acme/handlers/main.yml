@@ -1,0 +1,8 @@
+
+---
+
+- name: quickstart acme
+  command: acmetool --batch quickstart
+
+- name: rerun acme
+  command: acmetool --batch 

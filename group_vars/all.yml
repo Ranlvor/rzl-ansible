@@ -1,3 +1,7 @@
+# allowed values: staging, live
+acme_mode: staging
+#acme_mode: live
+
 web_hosts:
 # parameters:
 #   domain

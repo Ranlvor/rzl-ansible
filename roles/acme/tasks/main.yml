@@ -1,0 +1,28 @@
+- apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 9862409EF124EC763B84972FF5AC9651EDB58DFA
+
+# https://github.com/hlandau/acme says using the ubuntu package is the official way to install on debian
+- apt_repository:
+    repo: deb http://ppa.launchpad.net/hlandau/rhea/ubuntu xenial main
+    state: present
+    update_cache: yes
+
+- name: install acmetool
+  apt: name=acmetool state=present
+
+- name: initialise folders
+  command: acmetool --batch creates=/var/lib/acme/conf
+
+- name: configure acmetool
+  template:
+    src: responses
+    dest: /var/lib/acme/conf/responses
+  notify: quickstart acme
+
+- name: configure certificates
+  template:
+    src: domain
+    dest: /var/lib/acme/desired/{{ item.domain }} 
+  notify: rerun acme
+  with_items: "{{ web_hosts }}"
