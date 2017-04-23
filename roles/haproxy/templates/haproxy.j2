@@ -102,7 +102,7 @@ backend letsencrypt
 backend {{ host.domain }}
 {% if host.hsts is defined %}
 	http-request redirect scheme https if !{ ssl_fc }
-	http-response set-header Strict-Transport-Security "max-age={{ host.hsts }};"
+	http-response set-header Strict-Transport-Security max-age={{ host.hsts }}
 {% endif %}
 {% if host.redirect is defined %}
 	http-request redirect prefix {{ host.redirect }}
