@@ -68,10 +68,18 @@ frontend http
         use_backend letsencrypt if { path_beg /.well-known/acme-challenge/ }
 
 {% for host in web_hosts if host.default is undefined %}
-	{% if host.wildcard is undefined %}
-		use_backend {{ host.domain }} if { req_ssl_sni -i {{ host.domain }} }
-	{% elif host.wildcard == true %}
-		use_backend {{ host.domain }} if { req_ssl_sni -m end {{ host.domain }} }
+	{% if host.hsts is defined %}
+		{% if host.wildcard is undefined %}
+			http-request redirect scheme https if { req_ssl_sni -i {{ host.domain }} }
+		{% elif host.wildcard == true %}
+			http-request redirect scheme https if { req_ssl_sni -m end {{ host.domain }} }
+		{% endif %}
+	{% else %}
+		{% if host.wildcard is undefined %}
+			use_backend {{ host.domain }} if { req_ssl_sni -i {{ host.domain }} }
+		{% elif host.wildcard == true %}
+			use_backend {{ host.domain }} if { req_ssl_sni -m end {{ host.domain }} }
+		{% endif %}
 	{% endif %}
 {% endfor %}
 {% for host in web_hosts if host.default is defined and host.default == true %}
@@ -84,6 +92,10 @@ backend letsencrypt
 {% for host in web_hosts  %}
 
 backend {{ host.domain }}
+{% if host.hsts is defined %}
+	http-request redirect scheme https if !{ ssl_fc }
+	http-response set-header Strict-Transport-Security "max-age={{ host.hsts }};"
+{% endif %}
 	server {{ host.domain }} {{ host.backend_host }}:{{ host.backend_port_plain }}
 
 backend {{ host.domain }}_s

@@ -11,6 +11,8 @@ web_hosts:
 #                     Will request let's encrypt certificate and do SSL-Termination to plain if not set.
 #   wildcard: make *.domain wildcard to the same backend
 #   default: there is only one default-backend which is used when all other rules do not match
+#   hsts: if backend_port_ssl is not set: the HSTS-Timeout in seconds. Activates HTTP -> HTTPS-redirect.
+
 #- domain: git.raumzeitlabor.de
 #  backend_host: 192.0.2.0 #RFC documentation IP-Address, placeholder to test ansible untill the git-backend actually has an IP-Address
 #  backend_port_ssl: 443
@@ -19,6 +21,7 @@ web_hosts:
 - domain: www.raumzeitlabor.de
   backend_host: 172.17.0.3
   backend_port_plain: 80
+  hsts: 31536000
 
 #- domain: rzl-homepage.raumzeitlabor.org
 #  backend_host: 172.17.0.3
@@ -28,26 +31,32 @@ web_hosts:
 - domain: raumzeitlabor.de
   backend_host: 172.17.0.3
   backend_port_plain: 80
+  hsts: 31536000
 
 - domain: rzl.so
   backend_host: 172.17.0.3
   backend_port_plain: 80
+  hsts: 31536000
 
 - domain: www.rzl.so
   backend_host: 172.17.0.3
   backend_port_plain: 80
+  hsts: 31536000
 
 - domain: was.geht.im.rzl.so
   backend_host: 172.17.0.3
   backend_port_plain: 80
+  hsts: 31536000
 
 - domain: w.rzl.so
   backend_host: 172.17.0.5
   backend_port_plain: 80
+  hsts: 31536000
 
 - domain: wiki.raumzeitlabor.de
   backend_host: 172.17.0.5
   backend_port_plain: 80
+  hsts: 31536000
 
 - domain: default # default to the old docker container because wildcard does not yet work as expected
   backend_host: 172.17.0.2
