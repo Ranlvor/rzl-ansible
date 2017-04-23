@@ -72,7 +72,7 @@ frontend http
 		{% if host.wildcard is undefined %}
 			http-request redirect scheme https if { hdr(host) -i {{ host.domain }} }
 		{% elif host.wildcard == true %}
-			http-request redirect scheme https if { hdr(host) -m end {{ host.domain }} }
+			http-request redirect scheme https if { hdr_end(host) -i {{ host.domain }} }
 		{% endif %}
 	{% else %}
 		{% if host.wildcard is undefined %}
@@ -83,9 +83,9 @@ frontend http
 			{% endif %}
 		{% elif host.wildcard == true %}
 			{% if host.redirect is defined %}
-				http-request redirect prefix {{ host.redirect }} if { hdr(host) -m end {{ host.domain }} }
+				http-request redirect prefix {{ host.redirect }} if { hdr_end(host) -i {{ host.domain }} }
 			{% else %}
-				use_backend {{ host.domain }} if { hdr(host) -m end {{ host.domain }} }
+				use_backend {{ host.domain }} if { hdr_end(host) -i {{ host.domain }} }
 			{% endif %}
 		{% endif %}
 	{% endif %}
