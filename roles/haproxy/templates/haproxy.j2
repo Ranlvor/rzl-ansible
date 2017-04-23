@@ -70,20 +70,20 @@ frontend http
 {% for host in web_hosts if host.default is undefined %}
 	{% if host.hsts is defined %}
 		{% if host.wildcard is undefined %}
-			http-request redirect scheme https if { hdr(host) -i {{ host.domain }} }
+			http-request redirect scheme https if { hdr(host) -i {{ host.domain }} } !{ path_beg /.well-known/acme-challenge/ }
 		{% elif host.wildcard == true %}
-			http-request redirect scheme https if { hdr_end(host) -i {{ host.domain }} }
+			http-request redirect scheme https if { hdr_end(host) -i {{ host.domain }} } !{ path_beg /.well-known/acme-challenge/ }
 		{% endif %}
 	{% else %}
 		{% if host.wildcard is undefined %}
 			{% if host.redirect is defined %}
-				http-request redirect prefix {{ host.redirect }} if { hdr(host) -i {{ host.domain }} }
+				http-request redirect prefix {{ host.redirect }} if { hdr(host) -i {{ host.domain }} } !{ path_beg /.well-known/acme-challenge/ }
 			{% else %}
 				use_backend {{ host.domain }} if { hdr(host) -i {{ host.domain }} }
 			{% endif %}
 		{% elif host.wildcard == true %}
 			{% if host.redirect is defined %}
-				http-request redirect prefix {{ host.redirect }} if { hdr_end(host) -i {{ host.domain }} }
+				http-request redirect prefix {{ host.redirect }} if { hdr_end(host) -i {{ host.domain }} } !{ path_beg /.well-known/acme-challenge/ }
 			{% else %}
 				use_backend {{ host.domain }} if { hdr_end(host) -i {{ host.domain }} }
 			{% endif %}
