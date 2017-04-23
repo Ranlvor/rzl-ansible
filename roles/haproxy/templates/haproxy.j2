@@ -76,9 +76,17 @@ frontend http
 		{% endif %}
 	{% else %}
 		{% if host.wildcard is undefined %}
-			use_backend {{ host.domain }} if { hdr(host) -i {{ host.domain }} }
+			{% if host.redirect is defined %}
+				http-request redirect prefix {{ host.redirect }} if { hdr(host) -i {{ host.domain }} }
+			{% else %}
+				use_backend {{ host.domain }} if { hdr(host) -i {{ host.domain }} }
+			{% endif %}
 		{% elif host.wildcard == true %}
-			use_backend {{ host.domain }} if { hdr(host) -m end {{ host.domain }} }
+			{% if host.redirect is defined %}
+				http-request redirect prefix {{ host.redirect }} if { hdr(host) -m end {{ host.domain }} }
+			{% else %}
+				use_backend {{ host.domain }} if { hdr(host) -m end {{ host.domain }} }
+			{% endif %}
 		{% endif %}
 	{% endif %}
 {% endfor %}
@@ -96,7 +104,11 @@ backend {{ host.domain }}
 	http-request redirect scheme https if !{ ssl_fc }
 	http-response set-header Strict-Transport-Security "max-age={{ host.hsts }};"
 {% endif %}
+{% if host.redirect is defined %}
+	http-request redirect prefix {{ host.redirect }}
+{% else %}
 	server {{ host.domain }} {{ host.backend_host }}:{{ host.backend_port_plain }}
+{% endif %}
 
 backend {{ host.domain }}_s
 	mode tcp
@@ -115,3 +127,4 @@ frontend {{ host.domain }}_offload
 
 
 {% endfor %}
+
