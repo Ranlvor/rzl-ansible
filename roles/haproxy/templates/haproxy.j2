@@ -70,15 +70,15 @@ frontend http
 {% for host in web_hosts if host.default is undefined %}
 	{% if host.hsts is defined %}
 		{% if host.wildcard is undefined %}
-			http-request redirect scheme https if { req_ssl_sni -i {{ host.domain }} }
+			http-request redirect scheme https if { hdr(host) -i {{ host.domain }} }
 		{% elif host.wildcard == true %}
-			http-request redirect scheme https if { req_ssl_sni -m end {{ host.domain }} }
+			http-request redirect scheme https if { hdr(host) -m end {{ host.domain }} }
 		{% endif %}
 	{% else %}
 		{% if host.wildcard is undefined %}
-			use_backend {{ host.domain }} if { req_ssl_sni -i {{ host.domain }} }
+			use_backend {{ host.domain }} if { hdr(host) -i {{ host.domain }} }
 		{% elif host.wildcard == true %}
-			use_backend {{ host.domain }} if { req_ssl_sni -m end {{ host.domain }} }
+			use_backend {{ host.domain }} if { hdr(host) -m end {{ host.domain }} }
 		{% endif %}
 	{% endif %}
 {% endfor %}
