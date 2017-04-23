@@ -24,10 +24,10 @@ web_hosts:
   backend_port_plain: 80
   hsts: 31536000
 
-#- domain: rzl-homepage.raumzeitlabor.org
-#  backend_host: 172.17.0.3
-#  backend_port_plain: 80
-#  wildcard: true
+- domain: rzl-homepage.raumzeitlabor.org
+  backend_host: 172.17.0.3
+  backend_port_plain: 80
+  wildcard: true
 
 - domain: raumzeitlabor.de
   backend_host: 172.17.0.3
