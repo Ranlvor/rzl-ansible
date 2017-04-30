@@ -43,7 +43,7 @@ defaults
 
 
 frontend https
-	bind *:443
+	bind :::443 v4v6
 	mode tcp
 	tcp-request inspect-delay 30s
 	tcp-request content accept if { req_ssl_hello_type 1 }
@@ -61,7 +61,7 @@ frontend https
 {% endfor %}
 
 frontend http
-	bind *:80
+	bind :::80 v4v6
 	mode http
 
 	option forwardfor
