@@ -61,7 +61,7 @@ web_hosts:
 - domain: log.raumzeitlabor.de
   redirect: http://log.raumzeitlabor.org
 
-- domain: git.raumzeitlabor.de
+- domain: git.raumzeitlabor.org
   backend_host: 192.168.123.11
   backend_port_plain: 80
   backend_port_ssl: 443
