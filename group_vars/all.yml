@@ -66,3 +66,8 @@ web_hosts:
   backend_port_plain: 80
   backend_port_ssl: 443
 
+- domain: chat.raumzeitlabor.org
+  backend_host: 192.168.123.12
+  backend_port_plain: 80
+  backend_port_ssl: 443
+
