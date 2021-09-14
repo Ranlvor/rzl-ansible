@@ -13,11 +13,16 @@ web_hosts:
 #   default: there is only one default-backend which is used when all other rules do not match
 #   hsts: if backend_port_ssl is not set: the HSTS-Timeout in seconds. Activates HTTP -> HTTPS-redirect.
 #   redirect: redirect all requests to this domain to an other domain with 301
+#   webhosting: on which name should a webhosting-environment for this domain be created? If this is set backend_host should be a unique IPv6-Address for the webhosting-environment
 
 #- domain: git.raumzeitlabor.de
 #  backend_host: 192.0.2.0 #RFC documentation IP-Address, placeholder to test ansible untill the git-backend actually has an IP-Address
 #  backend_port_ssl: 443
 #  backend_port_plain: 80
+
+###############
+### Docker  ###
+###############
 
 - domain: www.raumzeitlabor.de
   redirect: https://raumzeitlabor.de
@@ -49,8 +54,7 @@ web_hosts:
   hsts: 31536000
 
 - domain: w.rzl.so
-  backend_host: 172.17.0.5
-  backend_port_plain: 80
+  redirect: https://wiki.raumzeitlabor.de/wiki
   hsts: 31536000
 
 - domain: wiki.raumzeitlabor.de
@@ -61,6 +65,9 @@ web_hosts:
 - domain: log.raumzeitlabor.de
   redirect: http://log.raumzeitlabor.org
 
+###################
+### Smaller VMs ###
+###################
 - domain: git.raumzeitlabor.org
   backend_host: 192.168.123.11
   backend_port_plain: 80
@@ -71,3 +78,40 @@ web_hosts:
   backend_port_plain: 80
   backend_port_ssl: 443
 
+- domain: webhosting-test.raumzeitlabor.org
+  backend_host: 2a01:4f8:161:9025:4::2
+  backend_port_plain: 80
+  webhosting: test
+
+###############
+### PREMIUM ###
+###############
+- domain: lists.raumzeitlabor.de
+  backend_host: 2a01:4f8:161:9025:4::1
+  backend_port_plain: 80
+  backend_port_ssl: 443
+
+- domain: benutzerdb.raumzeitlabor.de
+  backend_host: 2a01:4f8:161:9025:4::1
+  backend_port_plain: 80
+  backend_port_ssl: 443
+
+- domain: partkeepr.raumzeitlabor.de
+  backend_host: 2a01:4f8:161:9025:4::1
+  backend_port_plain: 80
+  backend_port_ssl: 443
+
+- domain: paste.raumzeitlabor.de
+  backend_host: 2a01:4f8:161:9025:4::1
+  backend_port_plain: 80
+  backend_port_ssl: 443
+
+- domain: status.raumzeitlabor.de
+  backend_host: 2a01:4f8:161:9025:4::1
+  backend_port_plain: 80
+  backend_port_ssl: 443
+
+- domain: mail.raumzeitlabor.de
+  backend_host: 2a01:4f8:161:9025:4::1
+  backend_port_plain: 80
+  backend_port_ssl: 443
