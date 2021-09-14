@@ -65,14 +65,16 @@ frontend http
 	mode http
 
 	option forwardfor
+{% for host in web_hosts if host.backend_port_ssl is undefined %}
         use_backend letsencrypt if { path_beg /.well-known/acme-challenge/ }
-{%- for host in web_hosts if host.backend_port_ssl is defined -%}
 	{%- if host.wildcard is undefined %}
-		! { hdr(host) -i {{ host.domain }} }
+		{ hdr(host) -i {{ host.domain }} }
 	{%- elif host.wildcard == true %}
-		! { hdr_end(host) -i {{ host.domain }} }
-	{%- endif -%}
-{%- endfor %}
+		{ hdr_end(host) -i {{ host.domain }} }
+	{%- endif %}
+
+{% endfor %}
+
 
 {% for host in web_hosts if host.default is undefined %}
 	{% if host.hsts is defined %}
