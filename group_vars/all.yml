@@ -13,6 +13,8 @@ web_hosts:
 #   default: there is only one default-backend which is used when all other rules do not match
 #   hsts: if backend_port_ssl is not set: the HSTS-Timeout in seconds. Activates HTTP -> HTTPS-redirect.
 #   redirect: redirect all requests to this domain to an other domain with 301
+#   redirect_flat: instead of redirecting source/A to target/A flatten source/Everything to target (drop the unnecessary path segment
+#                  (usefull if we want to redirect mm.rzl.so to https://wiki.raumzeitlabor.de/wiki/MicroMoody without allowing mm.rzl.so/Something as path)
 #   webhosting: on which name should a webhosting-environment for this domain be created? If this is set backend_host should be a unique IPv6-Address for the webhosting-environment
 
 #- domain: git.raumzeitlabor.de
@@ -27,30 +29,19 @@ web_hosts:
 - domain: www.raumzeitlabor.de
   redirect: https://raumzeitlabor.de
   default: true
-
-- domain: rzl-homepage.raumzeitlabor.org
-  backend_host: 172.17.0.3
-  backend_port_plain: 80
-  wildcard: true
-
-- domain: raumzeitlabor.de
-  backend_host: 172.17.0.3
-  backend_port_plain: 80
   hsts: 31536000
 
 - domain: rzl.so
-  backend_host: 172.17.0.3
-  backend_port_plain: 80
+  redirect: https://raumzeitlabor.de
   hsts: 31536000
 
 - domain: www.rzl.so
-  backend_host: 172.17.0.3
-  backend_port_plain: 80
+  redirect: https://raumzeitlabor.de
   hsts: 31536000
 
 - domain: was.geht.im.rzl.so
-  backend_host: 172.17.0.3
-  backend_port_plain: 80
+  redirect: https://raumzeitlabor.de/events
+  redirect_flat: true
   hsts: 31536000
 
 - domain: w.rzl.so
@@ -64,6 +55,11 @@ web_hosts:
 
 - domain: log.raumzeitlabor.de
   redirect: http://log.raumzeitlabor.org
+
+- domain: mv.rzl.so
+  redirect: https://jitsi.rhrk.uni-kl.de/RZL-MV-2021\#interfaceConfig.TOOLBAR_BUTTONS=%5B%22microphone%22%2C%22camera%22%2C%22chat%22%2C%22fullscreen%22%2C%22raisehand%22%2C%22settings%22%2C%22stats%22%2C%22toggle-camera%22%2C%22videoquality%22%2C%22tileview%22%2C%22desktop%22%2C%22participants-pane%22%2C%22hangup%22%2C%22profile%22%2C%22select-background%22%2C%22shortcuts%22%5D
+  hsts: 31536000
+  redirect_flat: true
 
 ###################
 ### Smaller VMs ###
@@ -125,6 +121,44 @@ web_hosts:
   backend_host: 2a01:4f8:161:9025:4::1
   backend_port_plain: 80
   backend_port_ssl: 443
+
+- domain: go.rzl.so
+  backend_host: 2a01:4f8:161:9025:4::1
+  backend_port_plain: 80
+  backend_port_ssl: 443
+
+- domain: s.rzl.so
+  backend_host: 2a01:4f8:161:9025:4::1
+  backend_port_plain: 80
+  backend_port_ssl: 443
+
+- domain: raumzeitlabor.de
+  backend_host: 2a01:4f8:161:9025:4::1
+  backend_port_plain: 80
+  backend_port_ssl: 443
+
+- domain: rzl-homepage.raumzeitlabor.org
+  backend_host: 2a01:4f8:161:9025:4::1
+  backend_port_plain: 80
+  backend_port_ssl: 443
+  wildcard: true
+
+#########################
+### Premium-Redirects ###
+#########################
+
+- domain: lhc.raumzeitlabor.de 
+  redirect: https://wiki.raumzeitlabor.de/wiki/LHC4
+  redirect_flat: true
+
+- domain: events.raumzeitlabor.de
+  redirect: https://raumzeitlabor.de/events/index.html
+  redirect_flat: true
+
+- domain: mm.rzl.so
+  redirect: https://wiki.raumzeitlabor.de/wiki/MicroMoody
+  redirect_flat: true
+
 
 
 

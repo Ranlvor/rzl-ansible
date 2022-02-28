@@ -86,13 +86,21 @@ frontend http
 	{% else %}
 		{% if host.wildcard is undefined %}
 			{% if host.redirect is defined %}
-				http-request redirect prefix {{ host.redirect }} if { hdr(host) -i {{ host.domain }} } !{ path_beg /.well-known/acme-challenge/ }
+				{% if host.redirect_flat is undefined %}
+					http-request redirect prefix {{ host.redirect }} if { hdr(host) -i {{ host.domain }} } !{ path_beg /.well-known/acme-challenge/ }
+				{% else %}
+					http-request redirect location {{ host.redirect }} if { hdr(host) -i {{ host.domain }} } !{ path_beg /.well-known/acme-challenge/ }
+				{% endif %}
 			{% else %}
 				use_backend {{ host.domain }} if { hdr(host) -i {{ host.domain }} }
 			{% endif %}
 		{% elif host.wildcard == true %}
 			{% if host.redirect is defined %}
-				http-request redirect prefix {{ host.redirect }} if { hdr_end(host) -i {{ host.domain }} } !{ path_beg /.well-known/acme-challenge/ }
+				{% if host.redirect_flat is undefined %}
+					http-request redirect prefix {{ host.redirect }} if { hdr_end(host) -i {{ host.domain }} } !{ path_beg /.well-known/acme-challenge/ }
+				{% else %}
+					http-request location prefix {{ host.redirect }} if { hdr_end(host) -i {{ host.domain }} } !{ path_beg /.well-known/acme-challenge/ }
+				{% endif %}
 			{% else %}
 				use_backend {{ host.domain }} if { hdr_end(host) -i {{ host.domain }} }
 			{% endif %}
@@ -114,7 +122,11 @@ backend {{ host.domain }}
 	http-response set-header Strict-Transport-Security max-age={{ host.hsts }}
 {% endif %}
 {% if host.redirect is defined %}
-	http-request redirect prefix {{ host.redirect }}
+	{% if host.redirect_flat is undefined %}
+		http-request redirect prefix {{ host.redirect }}
+	{% else %}
+		http-request redirect location {{ host.redirect }}
+	{% endif %}
 {% else %}
 	server {{ host.domain }} {{ host.backend_host }}:{{ host.backend_port_plain }}
 {% endif %}
